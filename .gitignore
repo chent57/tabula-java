@@ -7,3 +7,4 @@
 /src/test/resources/technology/tabula/icdar2013-dataset/test-statistics.json
 /target/
 *.iml
+/src/test/resources/chent57
