@@ -41,7 +41,7 @@ public class TestExtractTableRectangle {
             }
         }
 
-        // 6. 打印每页的Rectangle
+        // 6. 打印每页的Rectangle，如果一个page有多个表格，会有多个Rectangle
         for (Map.Entry<Integer, List<Rectangle>> entry : detectedTables.entrySet()) {
             System.out.println("page" + entry.getKey() + " : " + entry.getValue().toString());
         }

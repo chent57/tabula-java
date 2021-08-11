@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class TestExtractTable {
     @Test
-    public void extractOnePageTable() throws IOException {
+    public void extractOnePageOneTable() throws IOException {
 
 
         SpreadsheetExtractionAlgorithm bea = new SpreadsheetExtractionAlgorithm();
@@ -54,8 +54,12 @@ public class TestExtractTable {
 
 
 
+    /**
+     * 解析有多页pdf，且每页只有一个表格的情况的pdf文件
+     * @throws IOException IoException
+     */
     @Test
-    public void extractFileTable() throws IOException {
+    public void extractFileSingleTable() throws IOException {
         // 1. 读取文件
         File pdf = new File("src/test/resources/chent57/alipay.pdf");
 
@@ -100,6 +104,69 @@ public class TestExtractTable {
                     singleTran.add(t.getCell(i,j).getText(false));
                 }
                 result.add(singleTran);
+            }
+        }
+
+        System.out.println("total size: " + result.size());
+        for (List<String> list : result) {
+            System.out.println(list.toString());
+        }
+    }
+
+
+    /**
+     * 解析单页有多个表格的pdf文件
+     * @throws IOException IoException
+     */
+    @Test
+    public void extractFileMultiTable() throws IOException {
+        // 1. 读取文件
+        File pdf = new File("src/test/resources/technology/tabula/twotables.pdf");
+
+        // 2. pdfbox读取PDDocument
+        PDDocument pdfDocument = PDDocument.load(pdf);
+
+        // 3. tabula新建ObjectExtractor和NurminenDetectionAlgorithm，同时准备接收表格Rectangle的结构
+        ObjectExtractor extractor = new ObjectExtractor(pdfDocument);
+        NurminenDetectionAlgorithm detectionAlgorithm = new NurminenDetectionAlgorithm();
+        Map<Integer, List<Rectangle>> detectedTables = new HashMap<>();
+
+        // 4. 获取每页的PageIterator
+        PageIterator pages = extractor.extract();
+
+        // 5. 解析每页的Rectangle(table的位置)
+        while (pages.hasNext()) {
+            Page page = pages.next();
+            List<Rectangle> tablesOnPage = detectionAlgorithm.detect(page);
+            if (tablesOnPage.size() > 0) {
+                detectedTables.put(new Integer(page.getPageNumber()), tablesOnPage);
+            }
+        }
+
+        // 6.
+        List<List<String>> result = new ArrayList<>();
+        SpreadsheetExtractionAlgorithm bea = new SpreadsheetExtractionAlgorithm();
+
+        for (Map.Entry<Integer, List<Rectangle>> entry : detectedTables.entrySet()) {
+            Page page = UtilsForTesting.getPage("src/test/resources/technology/tabula/twotables.pdf",
+                    entry.getKey());
+
+            // 获取一个page中多个rectangle
+            for (Rectangle rectangle : entry.getValue()) {
+                Page area = page.getArea(rectangle.getTop(), rectangle.getLeft(),rectangle.getBottom(),rectangle.getRight());
+
+                List<Table> table = bea.extract(area);
+
+                // 获取一个page中多个table的数据
+                for (Table t : table) {
+                    for (int i = 0; i < t.getRowCount(); i++) {
+                        List<String> singleTran = new ArrayList<>();
+                        for (int j = 0; j < t.getColCount(); j++) {
+                            singleTran.add(t.getCell(i,j).getText(false));
+                        }
+                        result.add(singleTran);
+                    }
+                }
             }
         }
 
