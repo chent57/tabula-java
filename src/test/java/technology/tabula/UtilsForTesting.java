@@ -34,6 +34,20 @@ public class UtilsForTesting {
         }
     }
 
+    public static Page getPage(String path, String password, int pageNumber) throws IOException {
+        ObjectExtractor oe = null;
+        try {
+            PDDocument document = PDDocument
+                    .load(new File(path), password);
+            oe = new ObjectExtractor(document);
+            Page page = oe.extract(pageNumber);
+            return page;
+        } finally {
+            if (oe != null)
+                oe.close();
+        }
+    }
+
     public static String[][] tableToArrayOfRows(Table table) {
         List<List<RectangularTextContainer>> tableRows = table.getRows();
 
