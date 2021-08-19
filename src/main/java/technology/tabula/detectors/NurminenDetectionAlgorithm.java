@@ -673,7 +673,7 @@ public class NurminenDetectionAlgorithm implements DetectionAlgorithm {
         return tableAreas;
     }
 
-    private List<Ruling> getHorizontalRulings(BufferedImage image) {
+    public List<Ruling> getHorizontalRulings(BufferedImage image) {
 
         // get all horizontal edges, which we'll define as a change in grayscale colour
         // along a straight line of a certain length
@@ -801,7 +801,7 @@ public class NurminenDetectionAlgorithm implements DetectionAlgorithm {
 
 
     // taken from http://www.docjar.com/html/api/org/apache/pdfbox/examples/util/RemoveAllText.java.html
-    private PDDocument removeText(PDPage page) throws IOException {
+    public PDDocument removeText(PDPage page) throws IOException {
 
         PDFStreamParser parser = new PDFStreamParser(page);
         parser.parse();

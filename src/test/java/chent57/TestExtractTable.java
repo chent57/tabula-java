@@ -1,20 +1,28 @@
 package chent57;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.rendering.ImageType;
 import org.junit.Test;
 import technology.tabula.ObjectExtractor;
 import technology.tabula.Page;
 import technology.tabula.PageIterator;
 import technology.tabula.Rectangle;
+import technology.tabula.Ruling;
 import technology.tabula.Table;
+import technology.tabula.Utils;
 import technology.tabula.UtilsForTesting;
 import technology.tabula.detectors.NurminenDetectionAlgorithm;
 import technology.tabula.extractors.BasicExtractionAlgorithm;
 import technology.tabula.extractors.SpreadsheetExtractionAlgorithm;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,6 +243,64 @@ public class TestExtractTable {
         for (List<String> list : result) {
             System.out.println(list.toString());
         }
+    }
+
+    /**
+     * 获取pdf rectangle 数据测试
+     * @throws IOException IoException
+     */
+    @Test
+    public void writeBufferedImage() throws IOException {
+        File pdf = new File("src/test/resources/chent57/wechatpay.pdf");
+        PDDocument pdfDocument = PDDocument.load(pdf);
+
+        ObjectExtractor extractor = new ObjectExtractor(pdfDocument);
+
+        PageIterator pages = extractor.extract();
+        Page page = pages.next();
+
+        PDPage pdfPage = page.getPDPage();
+
+        BufferedImage image = null;
+        try {
+            image = Utils.pageConvertToImage(page.getPDDoc(), pdfPage, 144, ImageType.GRAY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ImageIO.write(image, "jpg", new File("src/test/resources/chent57/wechatpay.jpg"));
+
+
+
+
+        /*
+        // 2.
+        NurminenDetectionAlgorithm detectionAlgorithm = new NurminenDetectionAlgorithm();
+        List<Ruling> horizontalRulings = detectionAlgorithm.getHorizontalRulings(image);
+
+
+        PDDocument removeTextDocument = null;
+        try {
+            removeTextDocument = detectionAlgorithm.removeText(pdfPage);
+            pdfPage = removeTextDocument.getPage(0);
+            image = Utils.pageConvertToImage(removeTextDocument, pdfPage, 144, ImageType.GRAY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (removeTextDocument != null) {
+                try {
+                    removeTextDocument.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+
+         */
+
+
+
     }
 
 

@@ -14,8 +14,10 @@ import java.util.TreeMap;
 
 @SuppressWarnings("serial")
 public class Ruling extends Line2D.Float {
-    
+
+    // 垂直像素扩展量
     private static int PERPENDICULAR_PIXEL_EXPAND_AMOUNT = 2;
+    // 共线或平行像素扩展量
     private static int COLINEAR_OR_PARALLEL_PIXEL_EXPAND_AMOUNT = 1;
     private enum SOType { VERTICAL, HRIGHT, HLEFT }
 
