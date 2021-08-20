@@ -54,6 +54,9 @@ public class TestPdfVerification {
                     .iterator().next();
             SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(new BouncyCastleProvider()).build(cert);
 
+            // 获取签名证书的用户信息
+            System.out.println(cert.getSubject());
+
             boolean verifyRt = signerInfo.verify(verifier);
             System.out.println("result: " + verifyRt);
         } catch (IOException | CMSException e) {
